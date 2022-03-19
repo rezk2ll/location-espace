@@ -22,3 +22,19 @@ exports.validation=async(req,res,next)=>{
 next()
 }   
 
+/**
+ * Checks whether the requested user is the authorized one.
+ * 
+ * @param {Request} req 
+ * @param {Response} res 
+ * @param {Middleware} next 
+ */
+exports.deleteUserValidation = async (req, res, next) => {
+    const { params: { _id }, user: { _id: userId } } = req;
+
+    if (!id || !userId || _id !== userId) {
+        return res.status(401);
+    }
+
+    return next();
+}

@@ -1,8 +1,8 @@
 //importation
 const express = require("express");
-const { signup, signin } = require("../controllers/user");
+const { signup, signin, deleteUser } = require("../controllers/user");
 const isAuth = require("../middleware/isAuthUser");
-const { registerValidation, validation, loginValidation } = require("../middleware/validator");
+const { registerValidation, validation, loginValidation, deleteUserValidation } = require("../middleware/validator");
 
 //importation router
 const router = express.Router();
@@ -114,17 +114,7 @@ router.delete("/deleteAnnonce/:_id", async (req, res) => {
  * path:http://localhost:5000/api/user/deleteUser/:_id
  * req.params
  */
- router.delete("/deleteUser/:_id", async (req, res) => {
-  try {
-    const { _id } = req.params;
-    const deleteUser = await user.deleteOne({ _id });
-    return res.status(200).send({ msg: "I ve deleted", deleteUser });
-  } catch (error) {
-    return res.status(400).send({ msg: "I m not able to delete", error });
-  }
-});
-
-
+ router.delete("/deleteUser/:_id", isAuth, deleteUserValidation, deleteUser);
 
 //sign up sign in
 router.post("/signup",registerValidation(),validation, signup);
