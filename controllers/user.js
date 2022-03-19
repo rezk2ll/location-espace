@@ -53,7 +53,8 @@ exports.signin = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { _id } = req.params;
-    const deleteUser = await user.deleteOne({ _id });
+    // console.log(_id)
+    const deleteUser = await User.deleteOne({ _id });
     return res.status(200).send({ msg: "I ve deleted", deleteUser });
   } catch (error) {
     return res.status(400).send({ msg: "I m not able to delete", error });

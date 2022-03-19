@@ -10,7 +10,7 @@ import PrivateRoute from './route/PrivateRoute';
 import SignUpUser from './pages/SignupUser';
 import SigninUser from './pages/SigninUser';
 import Error from './pages/Error';
-import SignInAdmin from './pages/SignInAdmin';
+import SignInAdmin from './pages/admin/SignInAdmin';
 
 
 function App() {

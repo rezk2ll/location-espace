@@ -2,7 +2,7 @@
 const express = require("express");
 const { signup, signin, deleteUser } = require("../controllers/user");
 const isAuth = require("../middleware/isAuthUser");
-const { registerValidation, validation, loginValidation, deleteUserValidation } = require("../middleware/validator");
+const { registerValidation, validation, loginValidation, modifyUserValidation } = require("../middleware/validator");
 
 //importation router
 const router = express.Router();
@@ -25,13 +25,13 @@ router.post("/add", async (req, res) => {
       annoncementOwner,
       annoncementDescription,
       annoncementPicture,
-      annoncementExpo,
+      
     } = req.body;
     const newAnnonce = new annonce({
       annoncementOwner,
       annoncementDescription,
       annoncementPicture,
-      annoncementExpo,
+      annoncementExpo : new Date()
     });
     await newAnnonce.save();
     return res.status(200).send({ msg: "the annonce added", newAnnonce });
@@ -96,12 +96,12 @@ router.delete("/deleteAnnonce/:_id", async (req, res) => {
  * path:http://localhost:5000/api/user/editUser/:_id
  * req.params && req.body
  */
- router.put("/editUser/:_id", async (req, res) => {
+ router.put("/editUser/:_id",isAuth,modifyUserValidation, async (req, res) => {
   try {
     const { _id } = req.params;
     const {name,email,password,adresse,tel} = req.body;
     const editUser = await user.updateOne(
-      { _id:user._id },{ $set: { ...req.body } }
+      { _id },{ $set: { ...req.body } }
     );
     return res.status(200).send({ msg: "I ve updated", editUser });
   } catch (error) {
@@ -114,13 +114,13 @@ router.delete("/deleteAnnonce/:_id", async (req, res) => {
  * path:http://localhost:5000/api/user/deleteUser/:_id
  * req.params
  */
- router.delete("/deleteUser/:_id", isAuth, deleteUserValidation, deleteUser);
+ router.delete("/deleteUser/:_id", isAuth, modifyUserValidation, deleteUser);
 
 //sign up sign in
 router.post("/signup",registerValidation(),validation, signup);
 router.post("/signin",loginValidation(),validation, signin);
 router.get("/current", isAuth, (req, res) => {
-  res.send(req.user);
+  res.send({...req.user,isAdmin:false});
 });
 
 module.exports = router;

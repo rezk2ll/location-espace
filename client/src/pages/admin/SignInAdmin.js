@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { signin } from '../redux/actions/Admin'
+import { signin } from '../../redux/actions/Admin'
 
 function SignInAdmin() {
     const dispatch=useDispatch()
