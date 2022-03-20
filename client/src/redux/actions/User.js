@@ -42,7 +42,7 @@ export const logout=()=>{
  export const getAnnonce = () => async (dispatch) => {
     dispatch({ type: LOAD_ANNONCE });
     try {
-      let result = await axios.get("/api/user");
+      let result = await axios.get("/api/announcement");
       dispatch({ type: GET_ANNONCE, payload: result.data });
     } catch (error) {
       dispatch({ type: FAIL_ANNONCE, payload: error.response });

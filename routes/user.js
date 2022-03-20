@@ -1,126 +1,60 @@
 //importation
 const express = require("express");
-const { signup, signin, deleteUser } = require("../controllers/user");
-const isAuth = require("../middleware/isAuthUser");
-const { registerValidation, validation, loginValidation, modifyUserValidation } = require("../middleware/validator");
+const { create, login, list, del, getCurrentUser, update } = require("../controllers/user");
+const { isAuthenticated, isSameAsConnectedUser, isAdmin } = require('../middleware/user');
+const { registerValidation, validation, loginValidation } = require("../middleware/validator");
 
 //importation router
 const router = express.Router();
 
-//importation annonce Schema
-const annonce = require("../model/Annonce");
-
-//importation user Schema
-const user=require("../model/User")
-
-//CRUD
 /**
- * methode:post
- * path:http://localhost:5000/api/user/add
- * req.body
+ * list users route
+ * 
+ * @path http://localhost:5000/api/user/
+ * @method GET
  */
-router.post("/add", async (req, res) => {
-  try {
-    const {
-      annoncementOwner,
-      annoncementDescription,
-      annoncementPicture,
-      
-    } = req.body;
-    const newAnnonce = new annonce({
-      annoncementOwner,
-      annoncementDescription,
-      annoncementPicture,
-      annoncementExpo : new Date()
-    });
-    await newAnnonce.save();
-    return res.status(200).send({ msg: "the annonce added", newAnnonce });
-  } catch (error) {
-    return res.status(400).send({ msg: "can not add the annonce", error });
-  }
-});
-/**
- * methode:get ALL
- * path:http://localhost:5000/api/user/
- */
-router.get("/", async (req, res) => {
-  try {
-    const annonceList = await annonce.find();
-    return res
-      .status(200)
-      .send({ msg: "this is the list of annonce", annonceList });
-  } catch (error) {
-    return res.status(400).send({ msg: "can not show the list", error });
-  }
-});
-/**
- * methode:update annonce
- * path:http://localhost:5000/api/user/editAnnonce/:_id
- * req.params && req.body
- */
-router.put("/editAnnonce/:_id", async (req, res) => {
-  try {
-    const { _id } = req.params;
-    const {
-      annoncementOwner,
-      annoncementDescription,
-      annoncementPicture,
-      annoncementExpo,
-    } = req.body;
-    const editAnnonce = await annonce.updateOne(
-      { _id },
-      { $set: { ...req.body } }
-    );
-    return res.status(200).send({ msg: "the annonce updated", editAnnonce });
-  } catch (error) {
-    return res.status(400).send({ msg: "can not update the annonce", error });
-  }
-});
-/**
- * methode:delete annonce
- * path:http://localhost:5000/api/user/deleteAnnonce/:_id
- * req.params
- */
-router.delete("/deleteAnnonce/:_id", async (req, res) => {
-  try {
-    const { _id } = req.params;
-    const deleteAnnonce = await annonce.deleteOne({ _id });
-    return res.status(200).send({ msg: "the annonce deleted", deleteAnnonce });
-  } catch (error) {
-    return res.status(400).send({ msg: "can not deleted annonce", error });
-  }
-});
+router.get('/', isAdmin, list);
 
 /**
- * methode:update user
- * path:http://localhost:5000/api/user/editUser/:_id
- * req.params && req.body
+ * update user
+ * 
+ * @path http://localhost:5000/api/user/:_id
+ * @method PUT
+ * @params _id
  */
- router.put("/editUser/:_id",isAuth,modifyUserValidation, async (req, res) => {
-  try {
-    const { _id } = req.params;
-    const {name,email,password,adresse,tel} = req.body;
-    const editUser = await user.updateOne(
-      { _id },{ $set: { ...req.body } }
-    );
-    return res.status(200).send({ msg: "I ve updated", editUser });
-  } catch (error) {
-    return res.status(400).send({ msg: "I m not able to update", error });
-  }
-});
+router.put('/:_id', isAuthenticated, isSameAsConnectedUser, validation, update);
 
 /**
- * methode:delete user
- * path:http://localhost:5000/api/user/deleteUser/:_id
- * req.params
+ * signup route
+ * 
+ * @path http://localhost:5000/api/user/signup
+ * @method POST
  */
- router.delete("/deleteUser/:_id", isAuth, modifyUserValidation, deleteUser);
+router.post('/signup', registerValidation, validation, create);
 
-//sign up sign in
-router.post("/signup",registerValidation(),validation, signup);
-router.post("/signin",loginValidation(),validation, signin);
-router.get("/current", isAuth, (req, res) => {
-  res.send({...req.user,isAdmin:false});
-});
+/**
+ * signin route
+ * 
+ * @path http://localhost:5000/api/user/signin
+ * @method POST
+ */
+router.post('/signin', loginValidation, validation, login);
+
+/**
+ * delete user route
+ * 
+ * @path http://localhost:5000/api/user/:_id
+ * @method DELETE
+ * @params _id
+ */
+router.delete('/:_id', isAuthenticated, isSameAsConnectedUser, del);
+
+/**
+ * currently connected user route
+ * 
+ * @path http://localhost:5000/api/user/current
+ * @method GET
+ */
+router.get('/current', isAuthenticated, getCurrentUser);
 
 module.exports = router;

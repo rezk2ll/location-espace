@@ -19,6 +19,7 @@ app.use(express.json())
 //route global
 app.use("/api/admin",require("./routes/admin")) 
 app.use("/api/user",require("./routes/user"))
+app.use("/api/announcement", require("./routes/announcement"))
 
 
 
