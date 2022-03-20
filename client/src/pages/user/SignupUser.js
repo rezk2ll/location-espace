@@ -2,14 +2,30 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { signup } from "../../redux/actions/User";
+import { createUser } from "../../redux/actions/User";
+import { useNavigate } from "react-router-dom";
+import api from '../../lib/api';
+
 
 const Signup = () => {
     const [newUser, setNewUser] = useState({});
     const dispatch = useDispatch();
+    let navigate = useNavigate();
+
     const handleChange = (e) => {
-      setNewUser({ ...newUser, [e.target.name]: e.target.value });
+        setNewUser({ ...newUser, [e.target.name]: e.target.value });
     };
+
+    const handleSignup = async (e) => {
+        return api.post("/api/user/signup", newUser).then(({ data }) => {
+            dispatch(createUser(data));
+            navigate("/profile", { replace: true })
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
     return (
         <div
             style={{
@@ -62,14 +78,13 @@ const Signup = () => {
                         onChange={handleChange}
                     />
                     <br />
-                    <Link to="/profile">
-                        <Button
-                            style={{ margin: "10px" }}
-                            onClick={() => dispatch(signup(newUser))}
-                        >
-                            S'inscrire
-                        </Button>
-                    </Link>
+
+                    <Button
+                        style={{ margin: "10px" }}
+                        onClick={() => handleSignup()}
+                    >
+                        S'inscrire
+                    </Button>
                 </form>
             </div>
 

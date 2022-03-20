@@ -5,7 +5,7 @@ function Annonce() {
   return (
     <div>
       <h1>hello guys</h1>
-      {/* <ListAnnonce/> */}
+      <ListAnnonce/>
     </div> 
   )
 }

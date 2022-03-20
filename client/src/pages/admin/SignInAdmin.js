@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { signin } from '../../redux/actions/Admin'
+import { login } from '../../redux/actions/User'
 
 function SignInAdmin() {
     const dispatch=useDispatch()
@@ -33,7 +33,7 @@ function SignInAdmin() {
     <input type="password" placeholder="Enter Your Password" name="password" onChange={handleChange} />
     <br />
    <div>
-   <Link to={'/profile'}> <button  style={{ margin: "10px" }} type="submit" onClick={()=>dispatch(signin(newAdmin))}> S'identifier </button> </Link> 
+   <Link to={'/profile'}> <button  style={{ margin: "10px" }} type="submit" onClick={()=>dispatch(login(newAdmin))}> S'identifier </button> </Link> 
     
    </div>
     

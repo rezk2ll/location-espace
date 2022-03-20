@@ -22,7 +22,7 @@ exports.validation = async (req, res, next) => {
   if (!error.isEmpty()) {
     res.status(200).json({ errors: error.array() });
   }
-  next();
+  return next();
 };
 
 /**
