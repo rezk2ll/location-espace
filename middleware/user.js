@@ -19,12 +19,12 @@ const isAuthenticated = async (req, res, next) => {
       return res.status(401).send({ errors: [{ msg: "not authorized" }] });
     }
 
-    const _id = decodeJWT(token);
-    if (!decoded) {
+    const { id: _id } = decodeJWT(token);
+    if (!_id) {
       return res.status(401).send({ errors: [{ msg: "not authorized" }] });
     }
 
-    const foundAdmin = await Admin.findOne({ _id });
+    const foundAdmin = await Admin.findOne({ _id }).lean();
     if (foundAdmin) {
       req.user = foundAdmin;
       req.isAdmin = true;
@@ -32,7 +32,7 @@ const isAuthenticated = async (req, res, next) => {
       return next();
     }
 
-    const foundUser = await User.findOne({ _id });
+    const foundUser = await User.findOne({ _id }).lean();
     if (foundUser) {
       req.user = foundUser;
       req.isAdmin = false;
@@ -73,9 +73,7 @@ const isSameAsConnectedUser = async (req, res) => {
  */
 const decodeJWT = (token) => {
   try {
-    const { id } = jwt.verify(token, process.env.SECRET_KEY);
-
-    return id;
+    return jwt.verify(token, process.env.SECRET_KEY, { algorithms: ["HS256"] });
   } catch (error) {
     return null;
   }

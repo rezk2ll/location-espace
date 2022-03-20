@@ -1,80 +1,71 @@
-import axios from "axios";
-import { FAIL, LOAD, LOG_OUT, SIGN_IN, SIGN_UP } from "../actions types/User";
-import { FAIL_ANNONCE, GET_ANNONCE, LOAD_ANNONCE } from "../actions types/User";
+import api from '../../lib/api';
+import { LOG_OUT, SET_LOADING, SET_ERROR, LOGIN, SET_USER, SET_USERS } from "../types/User";
 
-
-export const signup=(newUser)=>async(dispatch)=>{
-    dispatch({type:LOAD})
-    try {
-       let result= await axios.post("/api/user/signup",newUser)
-       dispatch({
-           type:SIGN_UP ,
-           payload:result.data
-       })
-    } catch (error) {
-        dispatch({
-            type: FAIL,
-            payload:error.response.data.errors
-        })
-    }
-}
-export const signin=(user)=>async(dispatch)=>{
-    dispatch({type:LOAD})
-    try {
-       let result= await axios.post("/api/user/signin",user)
-       dispatch({
-           type:SIGN_IN ,
-           payload:result.data
-       })
-    } catch (error) {
-        dispatch({
-            type:FAIL ,
-            payload:error.response.data.errors
-        })
-    }
-}
-export const logout=()=>{
-    return {type:LOG_OUT}
-}
-//------------------CRUD---------------
-
- //get all annonce
- export const getAnnonce = () => async (dispatch) => {
-    dispatch({ type: LOAD_ANNONCE });
-    try {
-      let result = await axios.get("/api/announcement");
-      dispatch({ type: GET_ANNONCE, payload: result.data });
-    } catch (error) {
-      dispatch({ type: FAIL_ANNONCE, payload: error.response });
-    }
-  };
-  
-  //add annonce
-  export const addAnnonce = (newAnnonce) => async (dispatch) => {
-    try {
-      await axios.post("/api/user/add", newAnnonce);
-      dispatch(getAnnonce());
-    } catch (error) {
-      dispatch({ type: FAIL_ANNONCE, payload: error.response });
-    }
-  };
-  
-  //delete annonce
-  export const deleteAnnonce = (id) => async (dispatch) => {
-    try {
-      await axios.delete(`/api/user/deleteAnnonce/${id}`);
-      dispatch(getAnnonce());
-    } catch (error) {
-      dispatch({ type: FAIL_ANNONCE, payload: error.response });
-    }
-  };
-  //edit annonce
-  export const editAnnonce=(id,editAnnonce)=>async(dispatch)=>{
-      try {
-          await axios.put(`/api/user/editAnnonce/${id}`,editAnnonce)
-          dispatch(getAnnonce())
-      } catch (error) {
-          dispatch({ type: FAIL_ANNONCE, payload: error.response });
-          
-      }
+export const login = (user) => async (dispatch) => {
+  try {
+    dispatch({ type: SET_LOADING, payload: true });
+    dispatch({ type: LOGIN, payload: user });
   }
+  catch (err) {
+    dispatch({ type: SET_ERROR, payload: err.response.data.msg });
+  }
+}
+
+export const createUser = (newUser) => async (dispatch) => {
+  try {
+    dispatch({ type: SET_LOADING, payload: true });
+    dispatch({ type: SET_USER, payload: { ...newUser.user, token: newUser.token } });
+  }
+  catch (err) {
+    dispatch({ type: SET_ERROR, payload: err.response.data.msg });
+  }
+}
+
+export const logout = () => async (dispatch) => {
+  dispatch({ type: LOG_OUT });
+}
+
+export const getCurrentUser = () => async (dispatch) => {
+  try {
+    dispatch({ type: SET_LOADING, payload: true });
+    const res = await api.get("/api/user/current");
+    dispatch({ type: SET_USER, payload: res.data });
+  }
+  catch (err) {
+    dispatch({ type: SET_ERROR, payload: err });
+  }
+}
+
+export const updatedUser = (user) => async (dispatch) => {
+  try {
+    dispatch({ type: SET_LOADING, payload: true });
+    await api.put(`/api/user/${user.id}`, user);
+    dispatch(listUsers());
+  }
+  catch (err) {
+    dispatch({ type: SET_ERROR, payload: err.response.data.msg });
+  }
+}
+
+export const listUsers = () => async (dispatch) => {
+  try {
+    dispatch({ type: SET_LOADING, payload: true });
+    const res = await api.get("/api/user/list");
+    dispatch({ type: SET_USERS, payload: res.data });
+    dispatch(listUsers());
+  }
+  catch (err) {
+    dispatch({ type: SET_ERROR, payload: err.response.data.msg });
+  }
+}
+
+export const deleteUser = (id) => async (dispatch) => {
+  try {
+    dispatch({ type: SET_LOADING, payload: true });
+    await api.delete(`/api/user/${id}`);
+    dispatch(listUsers());
+  }
+  catch (err) {
+    dispatch({ type: SET_ERROR, payload: err.response.data.msg });
+  }
+}

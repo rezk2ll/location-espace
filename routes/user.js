@@ -30,7 +30,7 @@ router.put('/:_id', isAuthenticated, isSameAsConnectedUser, validation, update);
  * @path http://localhost:5000/api/user/signup
  * @method POST
  */
-router.post('/signup', registerValidation, validation, create);
+router.post('/signup', registerValidation(), validation, create);
 
 /**
  * signin route
@@ -38,7 +38,7 @@ router.post('/signup', registerValidation, validation, create);
  * @path http://localhost:5000/api/user/signin
  * @method POST
  */
-router.post('/signin', loginValidation, validation, login);
+router.post('/signin', loginValidation(), validation, login);
 
 /**
  * delete user route

@@ -1,39 +1,54 @@
-import { FAIL, GET_ANNONCE, LOAD, LOG_OUT, SIGN_IN, SIGN_UP } from "../actions types/User";
+import {
+  SET_ERROR,
+  SET_USER,
+  LOGIN,
+  LOG_OUT,
+  SET_USERS,
+  SET_LOADING,
+} from '../types/User';
 
 const initialState = {
-    user: [],
-    annonceList: {},
-    load: false,
-    errors: [],
-    isAuthuser: false,
-  };
-  const userReducer = (state = initialState, { type, payload }) => {
-    switch (type) {
-      case LOAD:
-        return { ...state, load: true };
-      case SIGN_IN:
-        localStorage.setItem("token", payload.token);
-        return { ...state, load: false, user: payload.user, isAuthuser: true };
-      case SIGN_UP:
-        localStorage.setItem("token", payload.token);
-        return { ...state, load: false, user: payload.user, isAuthuser: true };
-        case GET_ANNONCE:
-          return { ...state, load: false, user: payload.user  };
-      case LOG_OUT:
-        localStorage.removeItem("token");
-        return {
-          user: [],
-          annonceList: {},
-          load: false,
-          errors: [],
-          isAuthuser: false,
-        };
-      case FAIL:
-        return { ...state, load: false, errors: payload };
-  
-      default:
-        return state;
-    }
-  };
-  export default userReducer;
-  
+  userList: [],
+  user: {},
+  load: false,
+  errors: [],
+  isAuthenticated: false,
+};
+
+const userReducer = (state = initialState, { type, payload }) => {
+  switch (type) {
+    case SET_LOADING:
+      return { ...state, load: payload };
+
+    case LOGIN:
+      localStorage.setItem('token', payload.token);
+
+      return { ...state, load: true, user: payload.user, isAuthenticated: true };
+
+    case SET_USER:
+      localStorage.setItem('token', payload.token);
+
+      console.log(payload);
+
+      return { ...state, load: true, user: payload, isAuthenticated: true };
+
+    case SET_USERS:
+      return { ...state, load: true, userList: payload };
+
+    case LOG_OUT:
+      localStorage.removeItem('token');
+      return {
+        user: [],
+        annonceList: {},
+        load: false,
+        errors: [],
+        isAuthenticated: false,
+      };
+    case SET_ERROR:
+      return { ...state, load: false, errors: payload };
+
+    default:
+      return state;
+  }
+};
+export default userReducer;

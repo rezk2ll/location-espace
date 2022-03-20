@@ -1,4 +1,4 @@
-import { FAIL, GET_USER, LOAD, LOG_OUT, SIGN_IN } from "../actions types/Admin";
+import { FAIL, GET_USER, LOAD, LOG_OUT, SIGN_IN } from "../types/Admin";
 
 const initialState = {
   admin: [],

@@ -1,15 +1,33 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import {useDispatch} from 'react-redux'
-import { signin } from '../../redux/actions/User'
+import { useDispatch } from 'react-redux'
+import { login } from '../../redux/actions/User'
+import { Button } from "react-bootstrap";
+import api from '../../lib/api';
+import { useNavigate } from "react-router-dom";
+
+
+
 function SigninUser() {
-   const dispatch=useDispatch()
+  const dispatch = useDispatch()
   const [newUser, setNewUser] = useState({})
-  const handleChange=(e)=>{
-    setNewUser({...newUser,[e.target.name]:e.target.value})
+  let navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setNewUser({ ...newUser, [e.target.name]: e.target.value })
   }
+
+  const handleLogin = async (e) => {    
+    return api.post("/api/user/signin", newUser).then(res => {
+      dispatch(login(res.data))
+      navigate("/profile", { replace: true })
+    })
+    .catch(err => {
+      console.error('failed to login');
+    })
+  }
+
   return (
-    <div style={{ 
+    <div style={{
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
@@ -21,25 +39,29 @@ function SigninUser() {
       paddingBottom: "250px",
       paddingTop: "50px",
       fontSize: "20px",
-  }}>
-    
-    <div className="Container">
-      <form>
-        <h2> Hello User </h2>
-        <label>Email</label>
-    <input type="email" placeholder="Enter Your Email" name="email" onChange={handleChange} />
+    }}>
 
-    <label>Password</label>
-    <input type="password" placeholder="Enter Your Password" name="password" onChange={handleChange} />
-    <br />
-   <div>
-   <Link to={'/profile'}> <button  style={{ margin: "10px" }} type="submit" onClick={()=>dispatch(signin(newUser))}> S'identifier </button> </Link> 
-    {/* <Link to={'/signup'}> <button  style={{ margin: "10px" }} type="submit"> Sign Up </button> </Link>  */}
-   </div>
-    
-      </form>
+      <div className="Container">
+        <form>
+          <h2> Hello User </h2>
+          <label>Email</label>
+          <input type="email" placeholder="Enter Your Email" name="email" onChange={handleChange} />
+
+          <label>Password</label>
+          <input type="password" placeholder="Enter Your Password" name="password" onChange={handleChange} />
+          <br />
+          <div>
+            <Button
+              style={{ margin: "10px" }}
+              onClick={() => handleLogin()}
+            >
+              S'identifier
+            </Button>
+          </div>
+
+        </form>
+      </div>
     </div>
-  </div>
   )
 }
 

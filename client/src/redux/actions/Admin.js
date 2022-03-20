@@ -1,5 +1,5 @@
 import axios from "axios"
-import { FAIL, FAIL_USER, GET_USER, LOAD, LOAD_USER, LOG_OUT, SIGN_IN } from "../actions types/Admin"
+import { FAIL, FAIL_USER, GET_USER, LOAD, LOAD_USER, LOG_OUT, SIGN_IN } from "../types/Admin"
 
 //SIGN IN && SIGN UP && LOG OUT
 // export const signup=(newAdmin)=>async(dispatch)=>{ 

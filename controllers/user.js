@@ -15,7 +15,7 @@ const del = async (req, res) => {
   const { _id } = req.params;
 
   try {
-    const deletedUser = await user.deleteOne({ _id });
+    const deletedUser = await User.deleteOne({ _id });
 
     return res.status(200).send({ msg: "user deleted", deletedUser });
   } catch (error) {
@@ -33,7 +33,7 @@ const del = async (req, res) => {
  */
 const list = async (_, res) => {
   try {
-    const users = await user.find();
+    const users = await User.find();
 
     return res.status(200).send({ users });
   } catch (error) {
@@ -53,7 +53,7 @@ const update = async (req, res) => {
   const { _id } = req.params;
 
   try {
-    const updatedUser = await user.updateOne({ _id }, { ...req.body });
+    const updatedUser = await User.updateOne({ _id }, { ...req.body });
 
     return res.status(200).send({ user: updatedUser });
   } catch (error) {
@@ -73,7 +73,7 @@ const create = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    const foundUser = await user.findOne({ email });
+    const foundUser = await User.findOne({ email });
 
     if (foundUser) {
       return res
@@ -88,11 +88,13 @@ const create = async (req, res) => {
 
     const token = jwt.sign({ id: createdUser._id }, process.env.SECRET_KEY, {
       expiresIn: "2h",
+      algorithm: "HS256",
     })
 
     return res.status(200).send({user: createdUser, token });
   }
   catch(error){
+    console.error(error)
     return res.status(400).send({ msg: "failed to create the user", error });
   }
 }
@@ -101,7 +103,7 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const foundUser = await user.findOne({ email });
+    const foundUser = await User.findOne({ email });
 
     if (!foundUser) {
       return res.status(400).send({ errors: [{ msg: "bad credentials" }] });
@@ -115,11 +117,13 @@ const login = async (req, res) => {
 
     const token = jwt.sign({ id: foundUser._id }, process.env.SECRET_KEY, {
       expiresIn: "2h",
+      algorithm: "HS256",
     })
 
     return res.status(200).send({ user: foundUser, token });
   }
   catch(error){
+    console.error(error);
     return res.status(400).send({ msg: "failed to login", error });
   }
 }
@@ -128,7 +132,11 @@ const login = async (req, res) => {
  * Get currently connected user
  */
 const getCurrentUser = async (req, res) => {
-  return res.status(200).send({ ...req.user, isAdmin: req.isAdmin });
+  const token = jwt.sign({ id: req.user._id }, process.env.SECRET_KEY, {
+    expiresIn: "2h",
+    algorithm: "HS256",
+  })
+  return res.status(200).send({ ...req.user, isAdmin: req.isAdmin, token });
 }
 
 module.exports = {
