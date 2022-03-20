@@ -5,17 +5,17 @@ import { Spinner } from "react-bootstrap";
 
 function ListAnnonce() {
     const dispatch=useDispatch()
-    const annonce=useSelector((state)=>state.userReducer.user)
-    console.log(annonce)
+    const user=useSelector((state)=>state.userReducer.user)
+    // console.log(user)
     const load=useSelector((state)=>state.userReducer.load)
     useEffect(() => {
       dispatch(getAnnonce())
-    }, [dispatch])
+    }, [])
     
   return (
     <div>
         {/* hahahahah */}
-      {load?<Spinner animation="border" />: annonce.map((el)=> <h1> {el.annoncementOwner}</h1>)}
+      {load?<Spinner animation="border" />: user.map((el)=> <h1> {el.annoncementOwner}</h1>)}
     </div>
   )
 }

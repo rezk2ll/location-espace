@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {useDispatch} from 'react-redux'
-import { signin } from '../redux/actions/User'
+import { signin } from '../../redux/actions/User'
 function SigninUser() {
    const dispatch=useDispatch()
   const [newUser, setNewUser] = useState({})

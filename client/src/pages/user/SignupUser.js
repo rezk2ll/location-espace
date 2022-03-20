@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-import { signup } from "../redux/actions/User";
+import { signup } from "../../redux/actions/User";
+
 const Signup = () => {
     const [newUser, setNewUser] = useState({});
     const dispatch = useDispatch();

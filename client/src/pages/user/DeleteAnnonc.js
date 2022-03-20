@@ -1,9 +1,9 @@
 import React from 'react'
 
-function DeleteAnnonce() {
+function DeleteAnnonc() { 
   return (
     <div>DeleteAnnonce</div> 
   )
 }
 
-export default DeleteAnnonce
+export default DeleteAnnonc 

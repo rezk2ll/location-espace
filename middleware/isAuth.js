@@ -2,7 +2,7 @@
 const Admin = require("../model/Admin");
 const jwt = require("jsonwebtoken");
 
-const isAuth = async (req, res, next) => {
+const isAuthuser = async (req, res, next) => {
   try {
     const token = req.header("Authorization");
     if (!token) {
@@ -19,4 +19,4 @@ const isAuth = async (req, res, next) => {
     res.status(401).send({ errors: [{ msg: "not authorized" }] });
   }
 };
-module.exports = isAuth;
+module.exports = isAuthuser;
